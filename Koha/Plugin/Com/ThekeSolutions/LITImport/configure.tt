@@ -1,0 +1,33 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: LIT MARC import: Configuration</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs">
+  <a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo;
+  <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo;
+  <a href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::ThekeSolutions::LITImport&method=tool">LIT MARC import plugin</a> &rsaquo;
+  Configuration
+</div>
+
+<div id="doc3">
+
+    <h3>Koha: LIT import overlay: Configuration</h3>
+
+    <form method="get">
+        <input type="hidden" name="class" value="[% CLASS %]"/>
+        <input type="hidden" name="method" value="[% METHOD %]"/>
+
+        <label for="rules">Rules: </label>
+        <textarea name="rules" id="rules" rows="15" cols="50">[% rules %]</textarea>
+        <p>
+
+        <input type="hidden" name="save" value="1" />
+
+        <input type="submit" value="Save configuration" />
+    </form>
+
+[% INCLUDE 'intranet-bottom.inc' %]
