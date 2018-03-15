@@ -93,6 +93,7 @@
     <input type="hidden" name="class" value="[% CLASS %]"/>
     <input type="hidden" name="method" value="[% METHOD %]"/>
     <fieldset class="rows">
+        <legend>Batch information</legend>
         <input type="hidden" name="uploadedfileid" id="uploadedfileid" value="" />
         <input type="hidden" name="runinbackground" id="runinbackground" value="" />
         <input type="hidden" name="completedJobID" id="completedJobID" value="" />
@@ -101,14 +102,16 @@
         <label for="comments">Comments about this file: </label>
         <input type="text" id="comments" name="comments" />  
       </li>
-      <li>
+      <input type="hidden" name="record_type" id="record_type" value="biblio" />
+      <!--li>
         <label for='record_type'>Record type:</label>
         <select name='record_type' id='record_type'>
             <option value='biblio' selected='selected'>Bibliographic</option>
-            <!--option value='auth'>Authority</option-->
+            <option value='auth'>Authority</option>
         </select>
-      </li>
-      <li>
+      </li-->
+      <input type="hidden" name="encoding" id="encoding" value="UTF-8" />
+      <!--li>
         <label for="encoding">Character encoding: </label>
             <select name="encoding" id="encoding">
                 <option value="UTF-8" selected="selected">UTF-8 (Default)</option>
@@ -118,8 +121,9 @@
                 <option value="ISO_8859-1">ISO 8859-1</option>
                 <option value="EUC-KR">EUC-KR</option>
             </select>
-      </li>
-      <li>
+      </li-->
+      <input type="hidden" name="format" id="format" value="ISO2709" />
+      <!--li>
         <label for='format'>Format:</label>
         <select name='format' id='format'>
             <option value='ISO2709'>MARC</option>
@@ -128,11 +132,11 @@
                 <option value="[% p.metadata.class %]">[% p.metadata.name %] ( other format via plugin)</option>
             [% END %]
         </select>
-      </li>
+      </li-->
     </ol>
   </fieldset>
 
-  [% IF MarcModificationTemplatesLoop %]
+<!--   [% IF MarcModificationTemplatesLoop %]
     <fieldset class="rows">
       <legend>Use MARC Modification Template:</legend>
       <ol>
@@ -147,28 +151,34 @@
         </li>
       </ol>
     </fieldset>
-  [% END %]
+  [% END %] -->
 
   <fieldset class="rows">
-    <legend>Look for existing records in catalog?</legend>
-    <ol><li><label for="matcher">Record matching rule:</label>
-    <select name="matcher" id="matcher">
-       <option value="">Do not look for matching records</option> 
-       [% FOREACH available_matcher IN available_matchers %]
-          <option value="[% available_matcher.matcher_id %]">[% available_matcher.code %] ([% available_matcher.description %])
-          </option>
-       [% END %]
-    </select>
-    </li>
-      <li><label for="overlay_action">Action if matching record found: </label>
-           [% INCLUDE 'tools-overlay-action.inc' %]
-      </li>
-      <li><label for="nomatch_action">Action if no match is found: </label>
-           [% INCLUDE 'tools-nomatch-action.inc' %]
-      </li>
+    <legend>New records handling</legend>
+    <ol>
+        <input type="hidden" name="matcher" id="matcher" value="[% matching_rule %]" />
+<!--         <li><label for="matcher">Record matching rule:</label>
+            <select name="matcher" id="matcher">
+               <option value="">Do not look for matching records</option> 
+               [% FOREACH available_matcher IN available_matchers %]
+                  <option value="[% available_matcher.matcher_id %]">[% available_matcher.code %] ([% available_matcher.description %])
+                  </option>
+               [% END %]
+            </select>
+        </li> -->
+        <input type="hidden" name="overlay_action" id="overlay_action" value="replace" />
+<!--         <li><label for="overlay_action">Action if matching record found: </label>
+            [% INCLUDE 'tools-overlay-action.inc' %]
+        </li> -->
+        <li><label for="nomatch_action">Action if no match is found: </label>
+            [% INCLUDE 'tools-nomatch-action.inc' %]
+        </li>
     </ol>
   </fieldset>
-  <fieldset class="rows" id="items">
+
+  <input type="hidden" name="parse_items" id="parse_items" value="0" />
+
+  <!--fieldset class="rows" id="items">
     <legend>Check for embedded item record data?</legend>
     <ol>
       <li class="radio">
@@ -185,7 +195,7 @@
            [% INCLUDE 'tools-item-action.inc' %]
       </li>
     </ol>
-  </fieldset>
+  </fieldset-->
 
   <fieldset class="action">
     <input type="button" id="mainformsubmit" value="Stage for import" />

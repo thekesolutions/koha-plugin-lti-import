@@ -125,9 +125,12 @@ sub tool_step1 {
 
     my $template = $self->get_template( { file => 'tool-step1.tt' } );
 
+    my $matching_rule = $self->matching_rule;
+
     $template->param(
-        uploadmarc  => $file_id,
-        record_type => $record_type,
+        uploadmarc    => $file_id,
+        record_type   => $record_type,
+        matching_rule => $matching_rule
     );
 
     my %cookies   = fetch CGI::Cookie;
@@ -148,8 +151,7 @@ sub tool_step1 {
             ( $errors, $marcrecords ) = $self->RecordsFromMARCXMLFile( $file, $encoding );
         }
         elsif ( $format eq 'ISO2709' ) {
-            ( $errors, $marcrecords )
-                = $self->RecordsFromISO2709File( $file, $record_type, $encoding );
+            ( $errors, $marcrecords ) = $self->RecordsFromISO2709File( $file, $record_type, $encoding );
         }
         else {    # plugin based
             $errors = [];
@@ -372,6 +374,16 @@ sub rules {
 
     return $config->{rules}
         if exists $config->{rules};
+}
+
+sub matching_rule {
+    my ($self) = @_;
+    my $config;
+
+    eval { $config = YAML::Load($self->retrieve_data('rules') . "\n\n"); };
+
+    return $config->{matching_rule}
+        if exists $config->{matching_rule};
 }
 
 sub _overlay_record {
