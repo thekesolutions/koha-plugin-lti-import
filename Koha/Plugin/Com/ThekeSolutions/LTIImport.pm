@@ -18,6 +18,7 @@ use Modern::Perl;
 use base qw(Koha::Plugins::Base);
 
 ## We will also need to include any Koha libraries we want to access
+use C4::Charset;
 use C4::Context;
 use C4::Auth;
 use C4::Output;
@@ -27,7 +28,12 @@ use C4::Matcher;
 use Koha::UploadedFiles;
 use C4::BackgroundJob;
 use C4::MarcModificationTemplates;
+use Koha::Biblio::Metadatas;
+use Koha::Biblios;
 use Koha::Plugins;
+
+use Data::Printer;
+use MARC::Record;
 
 ## Here we set our plugin version
 our $VERSION = "{VERSION}";
@@ -64,7 +70,7 @@ sub new {
 sub tool {
     my ( $self, $args ) = @_;
 
-    my $cgi = $self->{'cgi'};
+    my $cgi = $self->{cgi};
 
     unless ( $cgi->param( 'stage_files' ) ) {
         $self->tool_step1();
@@ -74,6 +80,8 @@ sub tool {
 sub configure {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
+
+    ## TODO: Error handling on the configuration format
 
     unless ( $cgi->param('save') ) {
         my $template = $self->get_template({ file => 'configure.tt' });
@@ -137,11 +145,11 @@ sub tool_step1 {
 
         my ( $errors, $marcrecords );
         if ( $format eq 'MARCXML' ) {
-            ( $errors, $marcrecords ) = C4::ImportBatch::RecordsFromMARCXMLFile( $file, $encoding );
+            ( $errors, $marcrecords ) = $self->RecordsFromMARCXMLFile( $file, $encoding );
         }
         elsif ( $format eq 'ISO2709' ) {
             ( $errors, $marcrecords )
-                = C4::ImportBatch::RecordsFromISO2709File( $file, $record_type, $encoding );
+                = $self->RecordsFromISO2709File( $file, $record_type, $encoding );
         }
         else {    # plugin based
             $errors = [];
@@ -299,6 +307,121 @@ sub matching_progress_callback {
         my $progress = shift;
         $job->progress($start_progress + $progress);
     }
+}
+
+sub RecordsFromISO2709File {
+    my ($self, $input_file, $record_type, $encoding) = @_;
+    my @errors;
+
+    my $marc_type = C4::Context->preference('marcflavour');
+    $marc_type .= 'AUTH' if ($marc_type eq 'UNIMARC' && $record_type eq 'auth');
+
+    open IN, "<$input_file" or die "$0: cannot open input file $input_file: $!\n";
+    my @marc_records;
+    $/ = "\035";
+    while (<IN>) {
+        s/^\s+//;
+        s/\s+$//;
+        next unless $_; # skip if record has only whitespace, as might occur
+                        # if file includes newlines between each MARC record
+        my ($marc_record, $charset_guessed, $char_errors) = C4::Charset::MarcToUTF8Record($_, $marc_type, $encoding);
+        $marc_record = $self->_overlay_record($marc_record);
+        push @marc_records, $marc_record;
+        if ($charset_guessed ne $encoding) {
+            push @errors,
+                "Unexpected charset $charset_guessed, expecting $encoding";
+        }
+    }
+    close IN;
+    return ( \@errors, \@marc_records );
+}
+
+=head2 RecordsFromMARCXMLFile
+
+    my ($errors, $records) = C4::ImportBatch::RecordsFromMARCXMLFile($input_file, $encoding);
+
+Creates MARC::Record-objects out of the given MARCXML-file.
+
+@PARAM1, String, absolute path to the ISO2709 file.
+@PARAM2, String, should be utf8
+
+Returns two array refs.
+
+=cut
+
+sub RecordsFromMARCXMLFile {
+    my ( $self, $filename, $encoding ) = @_;
+    my $batch = MARC::File::XML->in( $filename );
+    my ( @marcRecords, @errors, $record );
+    do {
+        eval { $record = $batch->next( $encoding ); };
+        if ($@) {
+            push @errors, $@;
+        }
+        $record = $self->_overlay_record($record);
+        push @marcRecords, $record if $record;
+    } while( $record );
+    return (\@errors, \@marcRecords);
+}
+
+sub rules {
+    my ($self) = @_;
+    my $config;
+
+    eval { $config = YAML::Load($self->retrieve_data('rules') . "\n\n"); };
+
+    return $config->{rules}
+        if exists $config->{rules};
+}
+
+sub _overlay_record {
+    my ($self, $record) = @_;
+
+    my $marc_flavour = C4::Context->preference('marcflavour') || 'MARC21';
+    # Better read from koha<->marc mappings
+    return unless defined $record and ref($record) eq 'MARC::Record';
+    my $biblio_id = $record->subfield('999', 'c');
+    my $metadata;
+
+    $metadata = Koha::Biblio::Metadatas->search(
+        {   biblionumber => $biblio_id,
+            format       => 'marcxml',
+            marcflavour  => $marc_flavour
+        }
+        )->next->metadata
+        if $biblio_id;
+
+
+    if ( $metadata )
+    {
+        # Match!
+        my $overlayed_record = eval {
+            MARC::Record::new_from_xml( $metadata, "utf8", $marc_flavour );
+        };
+
+        # Do your thing based on config
+        my $rules = $self->rules;
+
+        if ( $rules ) {
+            # Some rules are defined change the original record
+            foreach my $rule ( @{ $rules } ) {
+                ## TODO: Handle filing indicator option!
+                my $fields = $rule->{fields} . '';
+                my $filing_indicators_only = ($rule->{filing_indicators_only} eq 'yes') ? 1 : 0;
+                # Delete existing fields
+                my @fields = $overlayed_record->field( $fields );
+                $overlayed_record->delete_fields( @fields );
+                # Add new fields
+                my @new_fields = $record->field( $fields  );
+                $overlayed_record->insert_fields_ordered( @new_fields );
+            }
+        }
+
+        # Return
+        return $overlayed_record;
+    }
+
+    return $record;
 }
 
 1;
