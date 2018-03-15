@@ -1,4 +1,4 @@
-package Koha::Plugin::Com::ThekeSolutions::LITImport;
+package Koha::Plugin::Com::ThekeSolutions::LTIImport;
 
 # This plugin is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ our $VERSION = "{VERSION}";
 
 ## Here is our metadata, some keys are required, some are optional
 our $metadata = {
-    name            => 'LIT MARC import',
+    name            => 'LTI MARC import',
     author          => 'Tomas Cohen Arazi',
     date_authored   => '2018-03-14',
     date_updated    => "2018-03-14",

@@ -1,5 +1,5 @@
 [% INCLUDE 'doc-head-open.inc' %]
- <title>Koha: LIT MARC import plugin</title>
+ <title>Koha: LTI MARC import plugin</title>
 [% INCLUDE 'doc-head-close.inc' %]
 </head>
 <body>
@@ -9,7 +9,7 @@
 <div id="breadcrumbs">
     <a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo;
     <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo;
-    <a href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::ThekeSolutions::LITImport&method=tool">LIT MARC import plugin</a> &rsaquo;
+    <a href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::ThekeSolutions::LTIImport&method=tool">LTI MARC import plugin</a> &rsaquo;
     Run
 </div>
 
@@ -22,7 +22,7 @@
 </div>
 [% END %]
 
-<h1>Stage LIT MARC records for import</h1>
+<h1>Stage LTI MARC records for import</h1>
 [% IF ( uploadmarc ) %]
 <p>MARC staging results :</p>
 <ul>
@@ -55,7 +55,7 @@
 [% ELSE %]
 
 <ul>
-    <li>Select a LIT MARC file to stage in the import reservoir.  It will be parsed, and each valid record staged for later import into the catalog.</li>
+    <li>Select a LTI MARC file to stage in the import reservoir.  It will be parsed, and each valid record staged for later import into the catalog.</li>
     <li>Overlay policies will be applied, based on the plugin configuration.</li>
     <li>You can enter a name for this import. It may be useful, when creating a record, to remember where the suggested MARC data comes from!</li>
 </ul>
@@ -189,7 +189,7 @@
 
   <fieldset class="action">
     <input type="button" id="mainformsubmit" value="Stage for import" />
-    <a class="cancel" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::ThekeSolutions::LITImport&method=tool">Cancel</a>
+    <a class="cancel" href="/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::Com::ThekeSolutions::LTIImport&method=tool">Cancel</a>
   </fieldset>
  
 
