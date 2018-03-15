@@ -1,0 +1,30 @@
+{
+  "name": "koha-plugin-lti-import",
+  "version": "0.1.0",
+  "previous_version": "0.0.9",
+  "description": "Koha LTI import plugin",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-cli": "^1.2.2",
+    "gulp-github-release": "^1.1.5",
+    "gulp-run": "^1.7.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thekesolutions/koha-plugin-lti-import.git"
+  },
+  "author": "Tomas Cohen Arazi <tomascohen@theke.io>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/thekesolutions/koha-plugin-lti-import/issues"
+  },
+  "homepage": "https://github.com/thekesolutions/koha-plugin-lti-import#readme",
+  "dependencies": {
+    "datetime": "0.0.3",
+    "jsonfile": "^4.0.0",
+    "node-datetime": "^2.0.0"
+  }
+}
