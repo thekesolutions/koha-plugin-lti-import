@@ -1,7 +1,7 @@
 {
   "name": "koha-plugin-lti-import",
-  "version": "0.1.1",
-  "previous_version": "0.1.0",
+  "version": "0.1.2",
+  "previous_version": "0.1.1",
   "description": "Koha LTI import plugin",
   "devDependencies": {
     "gulp": "^3.9.1",
