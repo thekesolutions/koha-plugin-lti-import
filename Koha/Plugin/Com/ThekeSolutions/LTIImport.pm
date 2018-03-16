@@ -293,6 +293,10 @@ sub tool_step1 {
     print $template->output();
 }
 
+sub uninstall {
+    return;
+}
+
 sub staging_progress_callback {
     my $job = shift;
     return sub {
