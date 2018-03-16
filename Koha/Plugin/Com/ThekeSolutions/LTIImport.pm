@@ -32,7 +32,6 @@ use Koha::Biblio::Metadatas;
 use Koha::Biblios;
 use Koha::Plugins;
 
-use Data::Printer;
 use MARC::Record;
 
 ## Here we set our plugin version
