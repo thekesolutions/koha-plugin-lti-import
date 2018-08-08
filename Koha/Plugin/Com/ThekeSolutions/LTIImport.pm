@@ -422,7 +422,11 @@ sub _overlay_record {
             foreach my $rule ( @{ $rules } ) {
                 ## TODO: Handle filing indicator option!
                 my $fields = $rule->{fields} . '';
-                my $filing_indicators_only = ($rule->{filing_indicators_only} eq 'yes') ? 1 : 0;
+                my $filing_indicators_only
+                    = ( defined $rule->{filing_indicators_only} && $rule->{filing_indicators_only} eq 'yes' )
+                    ? 1
+                    : 0;
+
                 # Delete existing fields
                 my @fields = $overlayed_record->field( $fields );
                 $overlayed_record->delete_fields( @fields );
