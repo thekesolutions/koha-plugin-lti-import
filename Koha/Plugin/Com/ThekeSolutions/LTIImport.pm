@@ -398,14 +398,18 @@ sub _overlay_record {
     my $biblio_id = $record->subfield('999', 'c');
     my $metadata;
 
-    $metadata = Koha::Biblio::Metadatas->search(
-        {   biblionumber => $biblio_id,
-            format       => 'marcxml',
-            marcflavour  => $marc_flavour
-        }
-        )->next->metadata
-        if $biblio_id;
+    if ($biblio_id) {
+        my $metadatas = Koha::Biblio::Metadatas->search(
+            {   biblionumber => $biblio_id,
+                format       => 'marcxml',
+                marcflavour  => $marc_flavour
+            }
+        );
 
+        if ( $metadatas->count > 0 ) {
+            $metadata = $metadatas->next->metadata;
+        }
+    }
 
     if ( $metadata )
     {
