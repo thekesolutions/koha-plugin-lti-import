@@ -1,6 +1,6 @@
 {
   "name": "koha-plugin-lti-import",
-  "version": "0.1.9",
+  "version": "0.3.0",
   "previous_version": "0.1.8",
   "description": "Koha LTI import plugin",
   "devDependencies": {
