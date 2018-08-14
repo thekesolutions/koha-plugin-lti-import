@@ -19,14 +19,18 @@
 
 use Modern::Perl;
 
-# # Add the plugin's dir to the libs path
-# use FindBin;
-# use lib "$FindBin::Bin/../../../../../";
+use C4::Context;
+
+# my $pluginsdir = C4::Context->config("pluginsdir");
+# if ( ref($pluginsdir) ne 'ARRAY' ) {
+#     $pluginsdir = [ $pluginsdir ];
+# }
+#
+#use lib @{ $pluginsdir };
+
+use lib C4::Context->config('pluginsdir');
 
 use C4::Auth qw(checkauth);
-use C4::Context;
-use lib @{C4::Context->config("pluginsdir")};
-
 use Koha::Plugin::Com::ThekeSolutions::LTIImport;
 
 my $cgi = new CGI;
