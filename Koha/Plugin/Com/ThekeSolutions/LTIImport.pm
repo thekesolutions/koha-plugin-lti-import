@@ -415,7 +415,7 @@ sub _overlay_record {
     {
         # Match!
         my $overlayed_record = eval {
-            MARC::Record::new_from_xml( $metadata, "utf8", $marc_flavour );
+            MARC::Record::new_from_xml( $metadata, "UTF-8", $marc_flavour );
         };
 
         # Do your thing based on config
