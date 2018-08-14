@@ -29,7 +29,26 @@ Once set up is complete you will need to alter your UseKohaPlugins system prefer
 
 # Setup
 
-Once the plugin is installed, the steps to get your LTI import tool running we need to configure it.
+Once the plugin is installed, you need to tweak your _Apache_ vhost configuration for the intranet. If you are using the packages
+install method (you should!) given the instance name **instance** you need to edit the
+_/etc/apache2/sites-available/**instance**.conf_ file. Look for the intranet vhost and add this:
+
+```
+ScriptAlias /lti-stage.pl "/var/lib/koha/instance/plugins/Koha/Plugin/Com/ThekeSolutions/LTIImport/lti-stage.pl"
+Alias /plugin "/var/lib/koha/instance/plugins"
+<Directory /var/lib/koha/instance/plugins>
+      Options Indexes FollowSymLinks
+      AllowOverride None
+      Require all granted
+</Directory>
+```
+
+Then restart _apache_:
+```
+$ sudo systemctl restart apache2.service
+```
+
+# Configuration
 
 The plugin configuration is a single text area that uses YAML to store the configuration options. In this example it looks like this:
 
@@ -47,27 +66,3 @@ Then, the _rules_ entry specifies a list of fields that are requested to be over
 field tag. Notice _dots_ can be used as wildcards.
 
 The _filing_indicators_only_ flag is introduced to tell the staging tool to keep _ind1_ and only overwrite _ind2_.
-
-# Build and release
-
-To use the new release functionality you must first install node/npm - these worked well for me:
-https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
-
-Next make sure to globally install gulp:
-sudo node i gulp -g
-
-You will need to setup a github access token:
-https://help.github.com/articles/creating-an-access-token-for-command-line-use/
-
-Then export it in into an environment variable:
-export GITHUB_TOKEN={paste token here}
-
-Before releasing update the version in package.json file
-
-Then, use the commands:
-gulp build
-gulp release
-
-The first will create the kpz, the second will create a new release on the github repoisitory and attach the kpz created above
-
-
