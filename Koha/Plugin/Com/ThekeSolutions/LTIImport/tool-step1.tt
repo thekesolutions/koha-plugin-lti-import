@@ -89,7 +89,7 @@
     </div>
 </form>
 
-<form method="post" id="processfile">
+<form method="post" id="processfile" action="/lti-stage.pl">
     <input type="hidden" name="class" value="[% CLASS %]"/>
     <input type="hidden" name="method" value="[% METHOD %]"/>
     <fieldset class="rows">
