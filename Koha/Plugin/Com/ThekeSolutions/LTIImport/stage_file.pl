@@ -62,7 +62,7 @@ my $result = GetOptions(
     'no-replace'         => \$no_replace,
     'no-create'          => \$no_create,
     'comment:s'          => \$batch_comment,
-    'authorities'        => \$authorities,
+#    'authorities'        => \$authorities,
     'h|help'             => \$want_help
 );
 
@@ -195,7 +195,6 @@ records into the main Koha database.
 
 Parameters:
     --file <file_name>      name of input MARC bib file
-    --authorities           stage authority records instead of bibs
     --encoding <encoding>   encoding of MARC records, default is UTF-8.
                             Other possible options are: MARC-8,
                             ISO_5426, ISO_6937, ISO_8859-1, EUC-KR
@@ -224,5 +223,8 @@ Parameters:
                             has spaces in it, surround the
                             comment with quotation marks.
     --help or -h            show this message.
+
+Unsupported options:
+    --authorities           stage authority records instead of bibs
 _USAGE_
 }
